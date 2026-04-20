@@ -1,0 +1,30 @@
+{
+  "name": "mood-skill",
+  "version": "1.0.0",
+  "description": "🐱 AI 助手心情系统 - 让 AI 拥有自己的心情，基于均值回归原理",
+  "main": "mood.js",
+  "scripts": {
+    "test": "node mood.js"
+  },
+  "keywords": [
+    "ai",
+    "mood",
+    "emotion",
+    "openclaw",
+    "assistant",
+    "chatbot"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "openclaw": {
+    "skill": true,
+    "platform": "openclaw"
+  }
+}
