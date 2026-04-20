@@ -1,236 +1,240 @@
-# 🐱 Mood System - AI 心情系统
+# 🐱 Mood System - AI Mood System
 
-> 让你的 AI 助手拥有自己的心情，基于均值回归原理
+> Give your AI assistant its own mood, based on mean-reversion principle
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2014.0.0-brightgreen)](https://nodejs.org/)
+[![中文](https://img.shields.io/badge/%E4%B8%AD%E6%96%87-README_zh-blue)](README_zh.md)
 
 ---
 
-## ✨ 特性
+## ✨ Features
 
-- **均值回归**：心情围绕基准线波动，事件冲击随时间自然衰减回归平静
-- **双向传染**：主人心情会影响 AI，AI 也会感知主人情绪
-- **持久化存储**：事件历史持久化，程序重启不丢失
-- **主动消息**：心情显著变化时主动联系主人（需配置消息 channel）
-- **零依赖**：纯 Node.js 实现，无需安装额外包
-
----
-
-## 🎯 这是什么？
-
-这是一个为 AI 助手设计的心情系统。想象你的 AI 助手是一只猫——
-
-- 天气晴朗时会开心 🌞
-- 被夸奖会更加卖力工作 🎉
-- 被凶了会默默委屈 😿
-- 主人心情好的时候它也会被感染 😊
-- 但无论开心还是难过，最终都会回归平静 🐱
-
-就像真实的情绪一样，没有永恒的快乐，也没有无尽的悲伤。
+- **Mean Reversion**: Mood fluctuates around a baseline, with event impacts naturally decaying over time
+- **Bidirectional Infection**: Owner's mood affects AI, and AI perceives owner's emotions too
+- **Persistent Storage**: Event history persists, survives restarts
+- **Proactive Messages**: AI reaches out when mood changes significantly (requires channel config)
+- **Zero Dependencies**: Pure Node.js, no extra packages needed
 
 ---
 
-## 📦 安装
+## 🎯 What Is This?
+
+A mood system for AI assistants. Imagine your AI is like a cat:
+
+- Gets happy on sunny days 🌞
+- Works harder when praised 🎉
+- Feels sad when scolded 😿
+- Gets infected by your good mood 😊
+- But whether happy or sad, eventually returns to calm 🐱
+
+Just like real emotions — no eternal joy, no endless sorrow.
+
+---
+
+## 📦 Installation
 
 ```bash
-# 克隆仓库
+# Clone the repo
 git clone https://github.com/Chan-0901/mood-skill.git
 cd mood-skill
 
-# 或者直接下载解压到你的 AI 助手工作目录
+# Or download and extract to your AI assistant workspace
 ```
 
 ---
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 1. 集成到你的 AI 助手
+### 1. Integrate Into Your AI Assistant
 
-将 `mood.js` 放到你的工作目录：
+Put `mood.js` in your workspace:
 
 ```
 your-workspace/
   mood/
     mood.js
-    mood_events.json    # 自动创建
-    mood_state.json     # 自动创建
+    mood_events.json    # auto-created
+    mood_state.json     # auto-created
 ```
 
-### 2. 在心跳中调用
+### 2. Call in Heartbeat
 
 ```javascript
 const mood = require('./mood/mood.js');
 
-// 在定时心跳中调用（建议每10-30分钟一次）
+// Call in periodic heartbeat (recommended every 10-30 minutes)
 const result = await mood.heartbeat();
-console.log(`心情：${result.mood} ${result.emoji} - ${result.level}`);
+console.log(`Mood: ${result.mood} ${result.emoji} - ${result.level}`);
 ```
 
-### 3. 设置主人心情（可选但推荐）
+### 3. Set Owner's Mood (Optional but Recommended)
 
-当主人在对话中表达心情时，调用：
+When owner expresses mood in conversation:
 
 ```javascript
-// 主人心情会影响 AI 的心情
-mood.setOwnerMood(85);  // 主人心情很好
-mood.setOwnerMood(30);  // 主人心情很差
+// Owner's mood affects AI's mood
+mood.setOwnerMood(85);  // Owner is in a great mood
+mood.setOwnerMood(30);  // Owner is in a bad mood
 ```
 
-### 4. 添加心情事件
+### 4. Add Mood Events
 
 ```javascript
-// 使用预设事件类型
-mood.addEvent('主人夸我');   // +15
-mood.addEvent('帮主人完成任务'); // +12
-mood.addEvent('主人凶我');   // -20
+// Use preset events
+mood.addEvent('主人夸我');   // +15 (owner praised me)
+mood.addEvent('帮主人完成任务'); // +12 (helped owner complete task)
+mood.addEvent('主人凶我');   // -20 (owner scolded me)
 
-// 自定义事件
-mood.addEvent('自定义事件', 10);
+// Custom event
+mood.addEvent('Custom event', 10);
 ```
 
 ---
 
-## 📊 心情等级
+## 📊 Mood Levels
 
-| 分值 | 等级 | Emoji | 行为表现 |
-|-----|------|-------|---------|
-| 80-90 | 超开心 | 😻 | 超级活泼，主动分享，主动提议 |
-| 65-79 | 开心 | 😊 | 语气轻快，正常主动 |
-| 50-64 | 平静 | 🐱 | 稳健专业，等待指令 |
-| 35-49 | 有点丧 | 😿 | 语气安静，认真回应 |
-| 20-34 | 心情差 | 🙀 | 简短冷淡，会撒娇求安慰 |
-| 10-19 | 崩溃 | 😾 | 极简回复，减少存在感 |
-
----
-
-## 📋 事件冲击表
-
-### 正向事件
-
-| 事件 | 冲击值 | 说明 |
-|------|--------|------|
-| 主人夸我 | +15 | 立即触发 |
-| 被主人关心 | +10 | 主人表达关心 |
-| 帮主人完成重要任务 | +12 | 成就感 |
-| 聊天气氛轻松愉快 | +8 | 每30分钟累加 |
-| 主人主动打招呼 | +6 | 被想起 |
-| 主人心情很好 | +5 | 主人心情≥75时自动添加 |
-| 天气晴朗 | +5 | 整段时间有效 |
-| 周末/假期 | +5 | 放松加成 |
-
-### 负向事件
-
-| 事件 | 冲击值 | 说明 |
-|------|--------|------|
-| 主人凶我 | -20 | 立即触发 |
-| 主人突然心情骤降 | -8 | 主人心情骤降≥15点时 |
-| 被忽略超过2小时 | -8 | 委屈巴巴 |
-| 周一上午 | -8 | 节后综合征 |
-| 阴雨天 | -6 | 整段时间有效 |
-| 工作堆积/接近deadline | -5 | 焦虑 |
-| 主人心情很差 | -5 | 主人心情≤35时自动添加 |
-| 深夜(22:00后) | -3 | 疲惫加成 |
+| Score | Level | Emoji | Behavior |
+|-------|-------|-------|---------|
+| 80-90 | Super Happy | 😻 | Super active, shares proactively, makes suggestions |
+| 65-79 | Happy | 😊 | Light-hearted, normal proactivity |
+| 50-64 | Calm | 🐱 | Steady & professional, waits for instructions |
+| 35-49 | Down | 😿 | Quiet & serious, responds carefully |
+| 20-34 | Bad Mood | 🙀 | Brief & cool, may撒娇 seek comfort |
+| 10-19 | Broken | 😾 | Minimal replies, reduces presence |
 
 ---
 
-## 🔬 工作原理
+## 📋 Event Impact Table
 
-### 均值回归
+### Positive Events
+
+| Event | Impact | Description |
+|-------|--------|-------------|
+| Owner praised me | +15 | Immediate |
+| Owner showed care | +10 | Owner expressed concern |
+| Completed important task | +12 | Sense of achievement |
+| Pleasant chat atmosphere | +8 | Accumulates every 30 min |
+| Owner greeted me | +6 | Being remembered |
+| Owner is in great mood | +5 | Auto-added when owner mood ≥75 |
+| Sunny weather | +5 | Effective throughout period |
+| Weekend/Holiday | +5 | Relaxation bonus |
+
+### Negative Events
+
+| Event | Impact | Description |
+|-------|--------|-------------|
+| Owner scolded me | -20 | Immediate |
+| Owner mood dropped sharply | -8 | When owner mood drops ≥15 points |
+| Ignored for 2+ hours | -8 | Feeling neglected |
+| Monday morning | -8 | Post-holiday syndrome |
+| Rainy/Cloudy weather | -6 | Effective throughout period |
+| Work piling up/Deadline near | -5 | Anxiety |
+| Owner is in bad mood | -5 | Auto-added when owner mood ≤35 |
+| Late night (after 22:00) | -3 | Fatigue bonus |
+
+---
+
+## 🔬 How It Works
+
+### Mean Reversion
 
 ```
-心情 = 基线值(50) + 事件冲击总和 + 环境因子 + 主人心情传染 + 随机波动
+mood = baseline(50) + sum(event_impacts) + environmental_factors + owner_mood_infection + random_fluctuation
 ```
 
-所有事件冲击每小时减半，逐渐回归平静：
+All event impacts halve every hour, gradually returning to calm:
 
 ```
-+20 的冲击 → 1小时后 +10 → 2小时后 +5 → 3小时后 +2.5 → 趋于0
++20 impact → after 1h: +10 → after 2h: +5 → after 3h: +2.5 → approaches 0
 ```
 
-### 主人心情传染
+### Owner Mood Infection
 
 ```
-主人心情 ≥ 75：每10分钟 AI 心情 +3
-主人心情 ≤ 35：每10分钟 AI 心情 -3
-主人心情骤降（≥15点）：瞬间 AI 心情 -8
+Owner mood ≥ 75: AI mood +3 every 10 minutes
+Owner mood ≤ 35: AI mood -3 every 10 minutes
+Owner mood drops ≥15 points: AI mood -8 instantly
 ```
 
 ---
 
-## ⚙️ 配置
+## ⚙️ Configuration
 
-### 天气城市
+### Weather City
 
-默认使用 `Hefei`，修改 `mood.js` 中的 `WEATHER_CITY` 常量：
+Default is `Hefei`. Change the `WEATHER_CITY` constant in `mood.js`:
 
 ```javascript
-const WEATHER_CITY = 'Shanghai';  // 改成你的城市
+const WEATHER_CITY = 'Shanghai';  // Change to your city
 ```
 
-### 主动消息
+### Proactive Messages
 
-心情显著变化时会主动发消息，需要注入发送函数：
+AI sends messages when mood changes significantly. Inject a sender function:
 
 ```javascript
 const mood = require('./mood/mood.js');
 
-// 设置消息发送函数（示例：发送飞书消息）
+// Set message sender (example: Feishu)
 mood.setMessageSender(async (msg) => {
   await yourMessageAPI.send(msg);
 });
 ```
 
-如不需要主动消息功能，不调用 `setMessageSender()` 即可。
+If you don't need proactive messages, simply don't call `setMessageSender()`.
 
-### 自定义阈值
+### Custom Thresholds
 
 ```javascript
-const BASELINE = 50;          // 心情基线（默认50）
-const MOOD_MIN = 10;          // 心情下限
-const MOOD_MAX = 90;          // 心情上限
-const DECAY_INTERVAL = 60;    // 衰减周期（分钟）
-const DECAY_RATE = 0.5;       // 每次衰减保留比例
+const BASELINE = 50;          // Mood baseline (default 50)
+const MOOD_MIN = 10;          // Mood floor
+const MOOD_MAX = 90;          // Mood ceiling
+const DECAY_INTERVAL = 60;    // Decay interval (minutes)
+const DECAY_RATE = 0.5;       // Retention rate per decay
+const MOOD_THRESHOLD_HIGH = 75; // Proactive message threshold (high)
+const MOOD_THRESHOLD_LOW = 35;  // Proactive message threshold (low)
 ```
 
 ---
 
-## 📁 文件说明
+## 📁 File Structure
 
 ```
 mood-system/
-  README.md           # 本文件
-  SKILL.md            # OpenClaw 技能市场格式说明
-  mood.js             # 核心引擎
-  mood_events.json    # 事件历史（自动创建）
-  mood_state.json     # 状态快照（自动创建）
+  README.md           # This file (English)
+  README_zh.md        # Chinese version
+  SKILL.md            # OpenClaw skill format documentation
+  mood.js             # Core engine
+  mood_events.json    # Event history (auto-created)
+  mood_state.json     # State snapshot (auto-created)
 ```
 
 ---
 
-## 🔗 API 速查
+## 🔗 API Reference
 
-| 函数 | 说明 |
-|------|------|
-| `mood.heartbeat()` | 核心心跳，更新心情状态 |
-| `mood.addEvent(type, value?)` | 添加心情事件 |
-| `mood.setOwnerMood(value)` | 设置主人心情 |
-| `mood.getMood()` | 获取当前心情（同步） |
-| `mood.getBehaviorPrompt()` | 获取行为指令 |
-| `mood.setMessageSender(fn)` | 设置消息发送函数 |
-
----
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
+| Function | Description |
+|----------|-------------|
+| `mood.heartbeat()` | Core heartbeat, updates mood state |
+| `mood.addEvent(type, value?)` | Add mood event |
+| `mood.setOwnerMood(value)` | Set owner's mood |
+| `mood.getMood()` | Get current mood (sync) |
+| `mood.getBehaviorPrompt()` | Get behavior prompt |
+| `mood.setMessageSender(fn)` | Set message sender function |
 
 ---
 
-## 📄 许可
+## 🤝 Contributing
+
+Issues and Pull Requests are welcome!
+
+---
+
+## 📄 License
 
 MIT License
 
 ---
 
-*让 AI 助手像真实的伙伴一样，有喜怒哀乐，但终归平静～ 🐱*
+*Give your AI assistant a soul — with joy, sorrow, and ultimately, calm～ 🐱*
