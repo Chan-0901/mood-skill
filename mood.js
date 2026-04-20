@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
+const { execSync } = require('child_process');
 
 // ============================================================
 // 用户配置区 - 请根据你的环境修改以下配置
@@ -210,32 +211,20 @@ function saveEvents(events) {
 
 function getWeather() {
   return new Promise((resolve) => {
-    const options = {
-      hostname: 'wttr.in',
-      port: 80,
-      path: `/${encodeURIComponent(WEATHER_CITY)}?format=%c%C`,
-      method: 'GET',
-      timeout: 3000,
-    };
-
-    const req = http.request(options, (res) => {
-      let data = '';
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        const weatherMap = {
-          '☀️': 'sunny', '晴': 'sunny',
-          '☁️': 'cloudy', '阴': 'cloudy', '多云': 'cloudy',
-          '🌧️': 'rainy', '雨': 'rainy',
-          '⛅': 'partlycloudy', '少云': 'partlycloudy',
-        };
-        const weather = weatherMap[data.trim()] || 'unknown';
-        resolve(weather);
-      });
-    });
-
-    req.on('error', () => resolve('unknown'));
-    req.on('timeout', () => { req.destroy(); resolve('unknown'); });
-    req.end();
+    try {
+      const cmd = `curl.exe -s "wttr.in/${encodeURIComponent(WEATHER_CITY)}?format=%c"`;
+      const data = execSync(cmd, { timeout: 5000, encoding: 'utf8' }).trim();
+      const weatherMap = {
+        '☀️': 'sunny', '晴': 'sunny',
+        '☁️': 'cloudy', '阴': 'cloudy', '多云': 'cloudy',
+        '🌧️': 'rainy', '雨': 'rainy',
+        '⛅': 'partlycloudy', '少云': 'partlycloudy',
+      };
+      const weather = weatherMap[data] || 'unknown';
+      resolve(weather);
+    } catch (e) {
+      resolve('unknown');
+    }
   });
 }
 
