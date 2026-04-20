@@ -35,8 +35,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/你的用户名/mood-system.git
-cd mood-system
+git clone https://github.com/Chan-0901/mood-skill.git
+cd mood-skill
 
 # 或者直接下载解压到你的 AI 助手工作目录
 ```
