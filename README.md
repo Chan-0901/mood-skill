@@ -162,7 +162,7 @@ mood.addEvent('自定义事件', 10);
 
 ### 天气城市
 
-默认使用 `Beijing`，修改 `mood.js` 第 16 行：
+默认使用 `Hefei`，修改 `mood.js` 中的 `WEATHER_CITY` 常量：
 
 ```javascript
 const WEATHER_CITY = 'Shanghai';  // 改成你的城市

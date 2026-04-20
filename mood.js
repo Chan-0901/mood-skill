@@ -22,7 +22,7 @@ const http = require('http');
 const MOOD_DIR = path.join(__dirname);
 
 // 天气获取的城市（改成你的城市）
-const WEATHER_CITY = 'Beijing';  // 可选：Beijing, Shanghai, Hefei, Shenzhen 等
+const WEATHER_CITY = 'Hefei';  // 可选：Beijing, Shanghai, Hefei, Shenzhen 等
 
 // 主动消息配置（心情好/差时主动联系主人）
 // 设为 null 可禁用主动消息功能
