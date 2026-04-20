@@ -176,6 +176,32 @@ const prompt = mood.getBehaviorPrompt();
 // 返回: 'MOOD_SUPER_HAPPY' | 'MOOD_HAPPY' | 'MOOD_CALM' | 'MOOD_SAD' | 'MOOD_BAD'
 ```
 
+### `analyzeEmotion(msg)` ⭐ 新功能
+
+自动检测主人消息中的夸奖或批评，自动调用 `addEvent()` 记录。
+
+```js
+// 推荐：每次对话后自动分析主人情绪
+const result = mood.analyzeEmotion('主人说：新闻整理的很棒！');
+// 返回：{ praised: true, criticized: false, reason: '检测到主人夸奖' }
+// 自动调用 addEvent('主人夸我')
+
+// 批评检测
+mood.analyzeEmotion('你做的什么东西，垃圾');
+// 返回：{ praised: false, criticized: true, reason: '检测到主人批评' }
+// 自动调用 addEvent('主人凶我')
+
+// 智能过滤：询问心情不算批评
+mood.analyzeEmotion('你心情怎么样？');
+// 返回：{ praised: false, criticized: false, reason: '' }
+// 不会误判 ✅
+```
+
+**特性：**
+- 自动识别中文夸奖/批评词汇
+- 同类型事件每天最多记录3次，防止刷分
+- 询问心情等中性消息不会误判为批评
+
 ## 自定义配置
 
 在 `mood.js` 中可以修改以下常量：

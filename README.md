@@ -90,6 +90,31 @@ mood.addEvent('主人凶我');   // -20 (owner scolded me)
 mood.addEvent('Custom event', 10);
 ```
 
+### 5. Auto Emotion Detection (NEW!)
+
+The system can automatically detect when the owner praises or criticizes the AI:
+
+```javascript
+// Call after each conversation turn
+const result = mood.analyzeEmotion('主人说：新闻整理的很棒！');
+// → { praised: true, criticized: false, reason: '检测到主人夸奖' }
+// Automatically calls addEvent('主人夸我') if praise detected
+
+// Criticism detection
+mood.analyzeEmotion('你做的什么东西，垃圾');
+// → { praised: false, criticized: true, reason: '检测到主人批评' }
+// Automatically calls addEvent('主人凶我') if criticism detected
+
+// Smart filtering (asking about mood won't count as criticism)
+mood.analyzeEmotion('你心情怎么样？');
+// → { praised: false, criticized: false, reason: '' }
+// No false positive ✅
+
+// Daily limit: max 3 praise + 3 criticism events per day
+```
+
+**Recommended usage**: Call `analyzeEmotion(userMessage)` after each AI response to automatically track emotions without manual intervention.
+
 ---
 
 ## 📊 Mood Levels
@@ -222,6 +247,7 @@ mood-system/
 | `mood.getMood()` | Get current mood (sync) |
 | `mood.getBehaviorPrompt()` | Get behavior prompt |
 | `mood.setMessageSender(fn)` | Set message sender function |
+| `mood.analyzeEmotion(msg)` | Auto-detect praise/criticism from owner messages |
 
 ---
 
