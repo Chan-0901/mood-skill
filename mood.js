@@ -483,6 +483,81 @@ async function checkAndSendMoodMessage(prevMood, currMood) {
 }
 
 // ============================================================
+// 情感分析接口 - 自动检测主人夸奖/批评
+// ============================================================
+
+/**
+ * 分析主人消息是否包含夸奖或批评，自动记录到心情系统
+ * @param {string} userMessage - 主人的原始消息
+ * @param {string} assistantMessage - AI的回复（用于检测是否表达了委屈等情绪）
+ * @returns {object} 检测结果 { praised: bool, criticized: bool, reason: string }
+ */
+function analyzeEmotion(userMessage, assistantMessage = '') {
+  const msg = userMessage || '';
+  const lowerMsg = msg.toLowerCase();
+  const now = new Date();
+  
+  // 一天内不重复记录同一类事件（防止频繁触发）
+  const events = loadEvents();
+  const today = now.toDateString();
+  const recentSameEvents = events.filter(e => 
+    (e.type === '主人夸我' || e.type === '主人凶我') &&
+    new Date(e.timestamp).toDateString() === today
+  );
+  
+  let result = { praised: false, criticized: false, reason: '' };
+  
+  // ========== 夸奖检测 ==========
+  const praisePatterns = [
+    // 直接夸
+    /夸|赞|棒|好棒|真棒|厉害|不错|满意|喜欢|谢谢|感谢|感激/
+  ];
+  
+  const hasPraise = praisePatterns.some(p => p.test(lowerMsg));
+  const isPraising = [
+    '很棒', '棒', '不错', '厉害', '谢谢', '满意', '喜欢', 
+    '夸', '赞', '好样的', '真棒', '做得好', '夸我', '夸小墨'
+  ].some(kw => lowerMsg.includes(kw));
+  
+  // ========== 批评检测 ==========
+  const criticizeKeywords = [
+    '骂', '凶', '差', '烂', '糟糕', '垃圾', '废物', '蠢', '笨', '讨厌', '烦', '滚',
+    '不行', '不好', '不对', '错了', '有问题', '不满意', '不喜欢', '别说了',
+    '你懂什么', '你算什么', '你想多了', '不是的', '不是吧',
+    '呵呵', '👎'
+  ];
+  
+  const hasCriticize = criticizeKeywords.some(kw => lowerMsg.includes(kw));
+  
+  // ========== 特殊情况：主人说"你心情怎么样"不算批评 ==========
+  const isMoodQuery = /心情|怎么|怎么样|如何/.test(msg) && msg.length < 20;
+  
+  // ========== 记录结果 ==========
+  if (hasPraise || isPraising) {
+    // 防止一天内重复记录超过3次
+    const praiseCountToday = recentSameEvents.filter(e => e.type === '主人夸我').length;
+    if (praiseCountToday < 3) {
+      addEvent('主人夸我');
+      result.praised = true;
+      result.reason = '检测到主人夸奖';
+      console.log('[Mood] 情感分析：检测到主人夸奖，已自动记录');
+    }
+  }
+  
+  if (hasCriticize && !isMoodQuery) {
+    const critCountToday = recentSameEvents.filter(e => e.type === '主人凶我').length;
+    if (critCountToday < 3) {
+      addEvent('主人凶我');
+      result.criticized = true;
+      result.reason = '检测到主人批评';
+      console.log('[Mood] 情感分析：检测到主人批评，已自动记录');
+    }
+  }
+  
+  return result;
+}
+
+// ============================================================
 // 快速接口
 // ============================================================
 
@@ -519,6 +594,7 @@ console.log(`[Mood] 数据目录: ${MOOD_DIR}`);
 module.exports = {
   heartbeat,
   addEvent,
+  analyzeEmotion,  // 新增：自动情感分析
   setOwnerMood,
   getMood,
   getBehaviorPrompt,
